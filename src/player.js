@@ -143,7 +143,6 @@ export class Player {
 
     // Speed
     let speed = this.isCrouching ? CROUCH_SPEED : this.isWalking ? WALK_SPEED : MOVE_SPEED;
-    if (roundPhase === 'freeze') speed = 0;
 
     // Movement direction
     const sinY = Math.sin(this.yaw);
