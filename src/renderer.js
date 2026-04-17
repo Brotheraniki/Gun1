@@ -355,7 +355,7 @@ export class Renderer {
     const q1 = new this.THREE.Quaternion();
     q1.setFromAxisAngle(new this.THREE.Vector3(0, 1, 0), -angles.yaw);
     const q2 = new this.THREE.Quaternion();
-    q2.setFromAxisAngle(new this.THREE.Vector3(1, 0, 0), -angles.pitch);
+    q2.setFromAxisAngle(new this.THREE.Vector3(1, 0, 0), angles.pitch);
     q1.multiply(q2);
     this.camera.quaternion.copy(q1);
 

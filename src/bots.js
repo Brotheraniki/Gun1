@@ -324,6 +324,7 @@ export class Bot {
   }
 
   _executeState(dt, player, geometry, roundState, bombState, canSee, audio) {
+    if (roundState.phase === 'freeze') { this.isMoving = false; return; }
     switch (this.state) {
       case 'idle':
         this.isMoving = false;
