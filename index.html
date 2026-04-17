@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS PROTOCOL</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loading-screen">
+    <div class="loading-content">
+      <div class="logo-text">NEXUS<span>PROTOCOL</span></div>
+      <div class="loading-bar"><div class="loading-fill" id="loading-fill"></div></div>
+      <div class="loading-status" id="loading-status">Initializing systems...</div>
+    </div>
+  </div>
+
+  <div id="main-menu" class="hidden">
+    <div class="menu-bg"></div>
+    <div class="menu-content">
+      <div class="menu-logo">
+        <div class="logo-main">NEXUS</div>
+        <div class="logo-sub">PROTOCOL</div>
+        <div class="logo-tagline">TACTICAL OPERATIONS</div>
+      </div>
+      <div class="menu-buttons">
+        <button class="menu-btn primary" id="btn-quickplay">QUICK PLAY</button>
+        <button class="menu-btn" id="btn-settings">SETTINGS</button>
+        <button class="menu-btn" id="btn-controls">CONTROLS</button>
+      </div>
+      <div class="menu-version">v1.0.0 PROTOTYPE</div>
+    </div>
+  </div>
+
+  <div id="settings-menu" class="hidden overlay-panel">
+    <div class="panel-inner">
+      <h2>SETTINGS</h2>
+      <div class="setting-row">
+        <label>MOUSE SENSITIVITY</label>
+        <input type="range" id="sens-slider" min="0.5" max="10" step="0.1" value="3">
+        <span id="sens-value">3.0</span>
+      </div>
+      <div class="setting-row">
+        <label>MASTER VOLUME</label>
+        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.7">
+        <span id="vol-value">70%</span>
+      </div>
+      <div class="setting-row">
+        <label>BOT DIFFICULTY</label>
+        <select id="difficulty-select">
+          <option value="easy">EASY</option>
+          <option value="normal" selected>NORMAL</option>
+          <option value="hard">HARD</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label>CROSSHAIR</label>
+        <select id="crosshair-select">
+          <option value="default">DEFAULT</option>
+          <option value="dot">DOT</option>
+          <option value="cross">CROSS</option>
+          <option value="circle">CIRCLE</option>
+        </select>
+      </div>
+      <button class="menu-btn" id="btn-settings-close">BACK</button>
+    </div>
+  </div>
+
+  <div id="controls-menu" class="hidden overlay-panel">
+    <div class="panel-inner">
+      <h2>CONTROLS</h2>
+      <div class="controls-list">
+        <div class="ctrl-row"><span>WASD</span><span>Move</span></div>
+        <div class="ctrl-row"><span>MOUSE</span><span>Aim</span></div>
+        <div class="ctrl-row"><span>LMB</span><span>Fire</span></div>
+        <div class="ctrl-row"><span>RMB</span><span>Aim Down Sights</span></div>
+        <div class="ctrl-row"><span>R</span><span>Reload</span></div>
+        <div class="ctrl-row"><span>SHIFT</span><span>Walk (Silent)</span></div>
+        <div class="ctrl-row"><span>CTRL</span><span>Crouch</span></div>
+        <div class="ctrl-row"><span>1/2/3</span><span>Switch Weapons</span></div>
+        <div class="ctrl-row"><span>F / E</span><span>Use / Interact</span></div>
+        <div class="ctrl-row"><span>B</span><span>Buy Menu</span></div>
+        <div class="ctrl-row"><span>TAB</span><span>Scoreboard</span></div>
+        <div class="ctrl-row"><span>ESC</span><span>Pause / Menu</span></div>
+      </div>
+      <button class="menu-btn" id="btn-controls-close">BACK</button>
+    </div>
+  </div>
+
+  <div id="team-select" class="hidden overlay-panel">
+    <div class="panel-inner wide">
+      <h2>SELECT ROLE</h2>
+      <div class="team-cards">
+        <div class="team-card attacker" id="team-attacker">
+          <div class="team-icon">⚡</div>
+          <div class="team-name">PHANTOM UNIT</div>
+          <div class="team-desc">Strike Force — Plant the device at target sites. Overwhelm the opposition and detonate.</div>
+          <div class="team-tag">ATTACKER</div>
+        </div>
+        <div class="team-card defender" id="team-defender">
+          <div class="team-icon">🛡</div>
+          <div class="team-name">GUARDIAN CORPS</div>
+          <div class="team-desc">Defense Force — Protect the sites. Stop the plant or defuse the device before detonation.</div>
+          <div class="team-tag">DEFENDER</div>
+        </div>
+      </div>
+      <div class="difficulty-display">Difficulty: <span id="diff-display">NORMAL</span></div>
+    </div>
+  </div>
+
+  <!-- GAME CANVAS -->
+  <canvas id="game-canvas" class="hidden"></canvas>
+
+  <!-- HUD OVERLAY -->
+  <div id="hud" class="hidden">
+    <div id="hud-top">
+      <div id="hud-score">
+        <span class="score-team attacker-score" id="score-attacker">0</span>
+        <span class="score-sep">—</span>
+        <span class="score-team defender-score" id="score-defender">0</span>
+      </div>
+      <div id="hud-timer" class="timer-display">
+        <div id="round-phase-label">LIVE</div>
+        <div id="round-timer">1:45</div>
+      </div>
+      <div id="hud-right-top">
+        <div id="bomb-status" class="hidden bomb-indicator">💣 DEVICE PLANTED</div>
+      </div>
+    </div>
+
+    <div id="hud-left">
+      <div id="teammate-status"></div>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="hud-weapon-area">
+        <div id="weapon-icon-area">
+          <div id="weapon-name-display">VECTOR-9</div>
+          <div id="ammo-display"><span id="ammo-clip">30</span><span class="ammo-sep">/</span><span id="ammo-reserve">90</span></div>
+        </div>
+        <div id="weapon-slots">
+          <div class="wslot" id="wslot-1">1</div>
+          <div class="wslot" id="wslot-2">2</div>
+          <div class="wslot" id="wslot-3">3</div>
+        </div>
+      </div>
+      <div id="hud-vitals">
+        <div id="health-bar-wrap">
+          <div id="health-icon">♥</div>
+          <div id="health-bar-bg"><div id="health-bar" style="width:100%"></div></div>
+          <div id="health-value">100</div>
+        </div>
+        <div id="armor-bar-wrap">
+          <div id="armor-icon">🛡</div>
+          <div id="armor-bar-bg"><div id="armor-bar" style="width:100%"></div></div>
+          <div id="armor-value">100</div>
+        </div>
+      </div>
+      <div id="hud-money">
+        <span id="money-icon">$</span><span id="money-value">3200</span>
+      </div>
+    </div>
+
+    <div id="hud-crosshair">
+      <div id="crosshair-container">
+        <div id="ch-top" class="ch-line"></div>
+        <div id="ch-bottom" class="ch-line"></div>
+        <div id="ch-left" class="ch-line"></div>
+        <div id="ch-right" class="ch-line"></div>
+        <div id="ch-dot" class="ch-dot"></div>
+      </div>
+    </div>
+
+    <div id="killfeed"></div>
+
+    <div id="interact-prompt" class="hidden">
+      <span id="interact-key">[F]</span> <span id="interact-action">Interact</span>
+    </div>
+
+    <div id="damage-vignette" class="hidden"></div>
+    <div id="hit-marker" class="hidden">✕</div>
+    <div id="kill-marker" class="hidden">✕</div>
+  </div>
+
+  <!-- BUY MENU -->
+  <div id="buy-menu" class="hidden">
+    <div class="buy-panel">
+      <div class="buy-header">
+        <h2>EQUIPMENT SHOP</h2>
+        <div class="buy-money">FUNDS: $<span id="buy-money-val">3200</span></div>
+        <div class="buy-timer">BUY PHASE: <span id="buy-timer-val">20</span>s</div>
+      </div>
+      <div class="buy-categories">
+        <button class="buy-cat active" data-cat="rifles">RIFLES</button>
+        <button class="buy-cat" data-cat="pistols">PISTOLS</button>
+        <button class="buy-cat" data-cat="smgs">SMGs</button>
+        <button class="buy-cat" data-cat="heavy">HEAVY</button>
+        <button class="buy-cat" data-cat="gear">GEAR</button>
+      </div>
+      <div id="buy-items-grid"></div>
+      <div class="buy-loadout">
+        <div class="loadout-title">CURRENT LOADOUT</div>
+        <div id="loadout-display"></div>
+      </div>
+      <button class="menu-btn" id="btn-buy-close">CLOSE [B]</button>
+    </div>
+  </div>
+
+  <!-- ROUND RESULT BANNER -->
+  <div id="round-result" class="hidden">
+    <div id="round-result-inner">
+      <div id="round-result-title"></div>
+      <div id="round-result-reason"></div>
+    </div>
+  </div>
+
+  <!-- SCOREBOARD -->
+  <div id="scoreboard" class="hidden">
+    <div class="scoreboard-panel">
+      <h2>SCOREBOARD</h2>
+      <div id="scoreboard-content"></div>
+    </div>
+  </div>
+
+  <!-- DEATH SCREEN -->
+  <div id="death-screen" class="hidden">
+    <div class="death-inner">
+      <div class="death-title">ELIMINATED</div>
+      <div class="death-killer" id="death-killer-info">Killed by BOT_ALPHA</div>
+      <div class="death-observe">Observing round...</div>
+    </div>
+  </div>
+
+  <!-- MATCH OVER -->
+  <div id="match-over" class="hidden">
+    <div class="match-over-inner">
+      <div id="match-result-title"></div>
+      <div id="match-final-score"></div>
+      <div id="match-stats"></div>
+      <button class="menu-btn primary" id="btn-rematch">PLAY AGAIN</button>
+      <button class="menu-btn" id="btn-main-menu-end">MAIN MENU</button>
+    </div>
+  </div>
+
+  <!-- PAUSE MENU -->
+  <div id="pause-menu" class="hidden overlay-panel">
+    <div class="panel-inner">
+      <h2>PAUSED</h2>
+      <button class="menu-btn primary" id="btn-resume">RESUME</button>
+      <button class="menu-btn" id="btn-pause-settings">SETTINGS</button>
+      <button class="menu-btn" id="btn-abandon">ABANDON MATCH</button>
+    </div>
+  </div>
+
+  <div id="pointer-lock-msg">
+    <div class="pl-inner">
+      <div class="pl-title">CLICK TO PLAY</div>
+      <div class="pl-sub">Click the game window to capture mouse. Press ESC to release.</div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
